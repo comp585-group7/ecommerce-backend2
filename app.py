@@ -47,8 +47,10 @@ def create_checkout_session():
                 'quantity': 1,
             }],
             mode='payment',
-            success_url='https://your-frontend-app.com/success',  # Replace with your actual success URL
-            cancel_url='https://your-frontend-app.com/cancel',    # Replace with your actual cancel URL
+success_url='http://localhost:3000/success',
+cancel_url='http://localhost:3000/cancel',
+
+
         )
 
         return jsonify({'url': session.url})
