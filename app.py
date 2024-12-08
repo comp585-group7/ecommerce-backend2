@@ -6,7 +6,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# Set your Stripe secret key from environment variable or use a test key
+# Set your Stripe secret key
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', 'sk_test_51OQD9DLQmZaxf1veBWMQ53wvnnPGtfYeszUcJuOMmwHYsMYx2vNah8s97P4GzRfsyGKJou5ZvRFCpskX0A62h0pP00PdT6Q1sW')
 
 @app.route('/create-payment-intent', methods=['POST'])
@@ -32,8 +32,7 @@ def create_checkout_session():
         amount = data['amount']     # in smallest currency unit
         currency = data['currency'] # e.g. "usd"
 
-        # Create a Checkout Session
-        # Replace the URLs below with your actual success/cancel pages hosted on your frontend
+        # Add '#' before '/success' and '/cancel' for hash-based routing
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=[{
@@ -47,10 +46,8 @@ def create_checkout_session():
                 'quantity': 1,
             }],
             mode='payment',
-success_url='http://localhost:3000/success',
-cancel_url='http://localhost:3000/cancel',
-
-
+            success_url='http://localhost:3000/#/success',
+            cancel_url='http://localhost:3000/#/cancel',
         )
 
         return jsonify({'url': session.url})
