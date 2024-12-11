@@ -32,7 +32,18 @@ def create_checkout_session():
         amount = data['amount']     # in smallest currency unit
         currency = data['currency'] # e.g. "usd"
 
-        # Add '#' before '/success' and '/cancel' for hash-based routing
+        # Check the referer or other request info to decide which URLs to use
+        referer = request.headers.get("Referer", "")
+
+        # Default to the netlify domain
+        success_url = 'https://dazzling-tanuki-f69421.netlify.app/#/success'
+        cancel_url = 'https://dazzling-tanuki-f69421.netlify.app/#/cancel'
+
+        # If the referer suggests the user is on localhost, use localhost URLs
+        if 'localhost:3000' in referer:
+            success_url = 'http://localhost:3000/#/success'
+            cancel_url = 'http://localhost:3000/#/cancel'
+
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=[{
@@ -46,8 +57,8 @@ def create_checkout_session():
                 'quantity': 1,
             }],
             mode='payment',
-            success_url='http://localhost:3000/#/success',
-            cancel_url='http://localhost:3000/#/cancel',
+            success_url=success_url,
+            cancel_url=cancel_url,
         )
 
         return jsonify({'url': session.url})
